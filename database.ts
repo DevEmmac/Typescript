@@ -1,8 +1,8 @@
 // INTERFACE IMPLEMENTATION
 
-interface Database {
-    get(id: string): string;
-    set(id: string, value: string): void
+interface Database<T, k> {
+    get(id: k): T;
+    set(id: k, value: T): void;
 }
 
 interface Persistable {
@@ -10,18 +10,20 @@ interface Persistable {
     restoreFromString(storedState: string): void;
 }
 
-class InMemoryDatabase implements Database {
-    protected db: Record<string, string> = {};
-    get(id: string): string {
+type DBKeyType = string | number | symbol;
+
+class InMemoryDatabase<T, k extends DBKeyType> implements Database<T, k> {
+    protected db: Record<k, T> = {} as Record<k, T>;
+    get(id: k): T {
         return this.db[id];
     }
 
-    set(id: string, value: string): void {
+    set(id: k, value: T): void {
         this.db[id] = value;
-    }
+    } 
 }
 
-class PersistentMemoryDB extends InMemoryDatabase implements Persistable {
+class PersistentMemoryDB<T, k extends DBKeyType > extends InMemoryDatabase<T, k> implements Persistable {
     saveToString(): string {
         return JSON.stringify(this.db);
     }
@@ -30,15 +32,16 @@ class PersistentMemoryDB extends InMemoryDatabase implements Persistable {
     }
 }
 
-const myDB = new PersistentMemoryDB();
-myDB.set("foo", "bar");
-console.log(myDB.get("foo"));
-console.log(myDB.saveToString());
+const myDB = new PersistentMemoryDB<number, string>();
+myDB.set("foo", 22);
 
-myDB.set("foo", "db1 - bar");
+console.log(myDB.get("foo"));
+const saved = myDB.saveToString();
+
+myDB.set("foo", 23);
 console.log(myDB.get("foo"))
 
-const saved = myDB.saveToString();
-const myDB2 = new PersistentMemoryDB();
+// const saved = myDB.saveToString();
+const myDB2 = new PersistentMemoryDB<number, string>();
 myDB2.restoreFromString(saved);
 console.log(myDB2.get("foo"))
