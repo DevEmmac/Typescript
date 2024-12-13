@@ -1,4 +1,4 @@
-"use strict";
+ "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchData = exports.printFormat = exports.format = exports.addStrings = void 0;
 exports.getName = getName;

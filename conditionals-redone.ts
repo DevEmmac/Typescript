@@ -19,7 +19,7 @@ function fetchPokemon (url: string, cb?: (data: PokemonResults) => void): unknow
    if (cb) {
     fetch(url)
       .then((resp) => resp.json())  
-      .then(cb);
+    //   .then(cb);
       return undefined;
    } else {
     return fetch(url).then((resp) => resp.json());  
